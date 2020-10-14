@@ -2,10 +2,7 @@ package com.tzashinorpu.netty.simple;
 
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -30,6 +27,17 @@ public class NettyServer {
                 });
 //        System.out.println("......Server is ready......");
         ChannelFuture cf = b.bind(6668).sync();  //10. 绑定端口 bind方法是异步的  sync方法是同步阻塞的
+
+        cf.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (channelFuture.isSuccess()) {
+                    System.out.println("绑定端口成功");
+                }else {
+                    System.out.println("绑定端口失败");
+                }
+            }
+        });
         System.out.println("......Server is starting......");
 
         //11. 关闭通道，关闭线程组
