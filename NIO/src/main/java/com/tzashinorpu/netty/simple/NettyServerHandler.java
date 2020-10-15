@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     //读取数据事件
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws InterruptedException {
+    public void channelRead(final ChannelHandlerContext ctx, Object msg) throws InterruptedException {
         // 如果当前的作业为较耗时作业，而 Workgroup 的线程有限：假设只有两个线程，当前这个作业耗时 20 s
         // 进入两个连接后，Workgroup 会开启两个线程进行处理（线程池内线程耗尽），此时若还有新连接进入，则 Workgroup 无法再次分配新进程进行处理
         // 新进入的连接只能等待 之前的连接处理完后进入当前的处理作业
@@ -29,7 +29,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         // 解决方案1：用户程序自定义的普通任务
 
         ctx.channel().eventLoop().execute(new Runnable() {
-            @Override
             public void run() {
                 try {
                     Long l1 = System.currentTimeMillis();
@@ -44,7 +43,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         });
 
         ctx.channel().eventLoop().execute(new Runnable() {
-            @Override
             public void run() {
                 try {
                     Long l1 = System.currentTimeMillis();
@@ -62,7 +60,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         // 用户自定义定时任务：该任务提交到 scheduleTaskQueue 而不是 taskqueue 中
 
         ctx.channel().eventLoop().schedule(new Runnable() {
-            @Override
             public void run() {
                 try {
                     Long l1 = System.currentTimeMillis();
@@ -77,7 +74,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         },5, TimeUnit.SECONDS);
         System.out.println("go on...");
         /*
-        System.out.println("服务器读取线程为："+Thread.currentThread().getName());
+        System.out.println("服务器读取线程为："+Thread.currentThread().getName()+" ,curr channel is"+
+                            ctx.channel());
 //        System.out.println("Server:" + ctx);
         ByteBuf buf = (ByteBuf) msg;
         System.out.println("客户端发来的消息：" + buf.toString(CharsetUtil.UTF_8));
