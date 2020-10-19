@@ -17,6 +17,7 @@ public class NIOFileChannel04 {
 
         //使用transferForm完成拷贝
         destCh.transferFrom(sourceCh,0,sourceCh.size());
+//        sourceCh.transferTo(0, destCh.size(), destCh);
         //关闭相关通道和流
         sourceCh.close();
         destCh.close();

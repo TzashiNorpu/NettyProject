@@ -25,16 +25,18 @@ public class ScatteringAndGatheringTest {
         ByteBuffer[] byteBuffers = new ByteBuffer[2];
         byteBuffers[0] = ByteBuffer.allocate(5);
         byteBuffers[1] = ByteBuffer.allocate(3);
-
+        System.out.println("服务端已启动...");
         //等客户端连接(telnet)
         SocketChannel socketChannel = serverSocketChannel.accept();
+        System.out.println("客户端已连入");
         int messageLength = 8;   //假定从客户端接收8个字节
         //循环的读取
         while (true) {
 
             int byteRead = 0;
-
+            // 依次读入最多8个字节，若客户端的数据不够8个字节在 read 处阻塞，若客户端的数据大于8个字节则分多次读入(最后还是在 read 处阻塞)
             while (byteRead < messageLength ) {
+                // 一个 channel 上关联一个 bytebuffer 数组
                 long l = socketChannel.read(byteBuffers);
                 byteRead += l; //累计读取的字节数
                 System.out.println("byteRead=" + byteRead);
@@ -58,6 +60,7 @@ public class ScatteringAndGatheringTest {
             });
 
             System.out.println("byteRead:=" + byteRead + " byteWrite=" + byteWirte + ", messagelength" + messageLength);
+            Arrays.asList(byteBuffers).stream().map(buffer -> "postion=" + buffer.position() + ", limit=" + buffer.limit()).forEach(System.out::println);
         }
 
 

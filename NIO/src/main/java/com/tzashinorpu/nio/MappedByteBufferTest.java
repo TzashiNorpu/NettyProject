@@ -19,7 +19,7 @@ public class MappedByteBufferTest {
          * 参数1: FileChannel.MapMode.READ_WRITE 使用的读写模式
          * 参数2： 0 ： 可以直接修改的起始位置
          * 参数3:  5: 是映射到内存的大小(不是索引位置) ,即将 1.txt 的多少个字节映射到内存
-         * 可以直接修改的范围就是 0-5
+         * 可以直接修改的范围就是 0-5 [ position ~ position + size]
          * 实际类型 DirectByteBuffer
          */
         MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 5);
@@ -30,7 +30,6 @@ public class MappedByteBufferTest {
 
         randomAccessFile.close();
         System.out.println("修改成功~~");
-
 
 
     }
