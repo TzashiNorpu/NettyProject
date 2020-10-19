@@ -12,9 +12,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="BIO" target="8" />
-      <module name="Netty" target="8" />
-      <module name="NIO" target="8" />
+      <module name="BIO" target="1.8" />
+      <module name="Netty" target="1.8" />
+      <module name="NIO" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
