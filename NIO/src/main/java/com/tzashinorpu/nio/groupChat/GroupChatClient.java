@@ -1,4 +1,4 @@
-package com.tzashinorpu.nio.groupChat;
+package com.tzashinorpu.nio.groupchat;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -82,6 +82,7 @@ public class GroupChatClient {
                     chatClient.readInfo();
                     try {
                         // 这里不用休眠  chatClient 的 select 可以阻塞
+                        //
                         Thread.currentThread().sleep(3000);
                     }catch (InterruptedException e) {
                         e.printStackTrace();
@@ -97,6 +98,4 @@ public class GroupChatClient {
             chatClient.sendInfo(s);
         }
     }
-
-
 }
