@@ -52,6 +52,7 @@ public class NettyServer {
             cf.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
+                    Thread.sleep(2000);
                     if (cf.isSuccess()) {
                         System.out.println("监听端口 6668 成功");
                     } else {
@@ -59,7 +60,8 @@ public class NettyServer {
                     }
                 }
             });
-
+            // 会先打印下面的输出再打印上面的监听端口成功的输出
+            System.out.println("bind操作是否是异步...");
 
             //对关闭通道进行监听
             cf.channel().closeFuture().sync();
