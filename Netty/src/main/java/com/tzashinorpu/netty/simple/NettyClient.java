@@ -1,12 +1,15 @@
 package com.tzashinorpu.netty.simple;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.util.Scanner;
 
 public class NettyClient {
     public static void main(String[] args) throws Exception {
@@ -27,9 +30,9 @@ public class NettyClient {
                     // 可以是 SockerChannel，NioSocketChannel implement SocketChannel-->NioSocketChannel 可以强转为其父类
                     // 也即 .Init 的参数必须是 .channel 的参数的父类
                     // .channel 的参数除了 NioSocketChannel 还可以是别的什么类？可以是 .channel(SocketChannel.class) 类吗？
-                    .handler(new ChannelInitializer<AbstractChannel>() {
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(AbstractChannel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new NettyClientHandler()); //加入自己的处理器
                         }
                     });
@@ -41,10 +44,19 @@ public class NettyClient {
             ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 6668).sync();
             //给关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
+
+            //得到channel
+            Channel channel = channelFuture.channel();
+            System.out.println("-------" + channel.localAddress()+ "--------");
+            //客户端需要输入信息，创建一个扫描器
+            Scanner scanner = new Scanner(System.in);
+            while (scanner.hasNextLine()) {
+                String msg = scanner.nextLine();
+                //通过channel 发送到服务器端
+                channel.writeAndFlush(msg + "\r\n");
+            }
         }finally {
-
             group.shutdownGracefully();
-
         }
     }
 }
