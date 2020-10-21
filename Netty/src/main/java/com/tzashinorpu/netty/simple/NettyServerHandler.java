@@ -27,15 +27,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
 /*
 
-        //比如这里我们有一个非常耗时长的业务-> 异步执行 -> 提交该channel 对应的
-        //NIOEventLoop 的 taskQueue中,
+        //比如这里我们有一个非常耗时长的业务-> 异步执行 -> 提交该channel 对应的 NIOEventLoop 的 taskQueue中
 
         //解决方案1 用户程序自定义的普通任务
-
         ctx.channel().eventLoop().execute(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     Thread.sleep(5 * 1000);
                     ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵2", CharsetUtil.UTF_8));
@@ -49,7 +46,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         ctx.channel().eventLoop().execute(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     Thread.sleep(5 * 1000);
                     ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵3", CharsetUtil.UTF_8));
@@ -61,11 +57,9 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         });
 
         //解决方案2 : 用户自定义定时任务 -》 该任务是提交到 scheduleTaskQueue中
-
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     Thread.sleep(5 * 1000);
                     ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵4", CharsetUtil.UTF_8));
@@ -75,24 +69,20 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         }, 5, TimeUnit.SECONDS);
-
-
-
         System.out.println("go on ...");*/
-
-
-        System.out.println("服务器读取线程 " + Thread.currentThread().getName() + " channle =" + ctx.channel());
-        System.out.println("server ctx =" + ctx);
-        System.out.println("看看channel 和 pipeline的关系");
+        System.out.println("服务器读取线程 " + Thread.currentThread().getName()/* + " channle =" + ctx.channel()*/);
+        /*System.out.println("server ctx =" + ctx);
+        System.out.println("看看channel 和 pipeline的关系");*/
         Channel channel = ctx.channel();
         ChannelPipeline pipeline = ctx.pipeline(); //本质是一个双向链接, 出站入站
-
-
+        System.out.println("pipeline hashcode="+pipeline.hashCode());
+        System.out.println("eventLoop hashcode="+channel.eventLoop().hashCode());
         //将 msg 转成一个 ByteBuf
         //ByteBuf 是 Netty 提供的，不是 NIO 的 ByteBuffer.
         ByteBuf buf = (ByteBuf) msg;
         System.out.println("客户端发送消息是:" + buf.toString(CharsetUtil.UTF_8));
         System.out.println("客户端地址:" + channel.remoteAddress());
+        System.out.println("******************************************");
     }
 
     //数据读取完毕
