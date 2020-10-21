@@ -8,8 +8,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class NettyServer {
     public static void main(String[] args) throws Exception {
-
-
         //创建BossGroup 和 WorkerGroup
         //说明
         //1. 创建两个线程组 bossGroup 和 workerGroup
@@ -18,16 +16,17 @@ public class NettyServer {
         //4. bossGroup 和 workerGroup 含有的子线程(NioEventLoop)的个数
         //   默认实际 cpu核数 * 2
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(); //
-
-
+        EventLoopGroup workerGroup = new NioEventLoopGroup(2); //
         try {
             //创建服务器端的启动对象，配置参数
             ServerBootstrap bootstrap = new ServerBootstrap();
-
             //使用链式编程来进行设置
             bootstrap.group(bossGroup, workerGroup) //设置两个线程组
-                    .channel(NioServerSocketChannel.class) //使用NioSocketChannel 作为服务器的通道实现
+                    // .channel 的 NioServerSocketChannel 和 bossgroup 对应
+                    // .childHandler 的 ChannelInitializer 里的 SocketChannel 和 workergroup 对应(老师讲的有问题我觉得，workergroup不应该是 NioSocketChannel吗？)
+                    // 我认为 .channel 的参数应该是 NioServerSocketChannel 类或其父类，和 bossgroup 用于监听的类对应
+                    // .childHandler 的参数应该是注册到 workergroup 中的通道的类型或其父类，也即 pipiline 中被管道处理的通道的类型
+                    .channel(NioServerSocketChannel.class) //使用NioServerSocketChannel 作为服务器的通道实现；不能是 NioSocketChannel
                     .option(ChannelOption.SO_BACKLOG, 128) // 设置线程队列得到连接个数
                     .childOption(ChannelOption.SO_KEEPALIVE, true) //设置保持活动连接状态
 //                    .handler(null) // 该 handler对应 bossGroup , childHandler 对应 workerGroup
