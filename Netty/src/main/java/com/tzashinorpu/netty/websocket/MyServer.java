@@ -21,15 +21,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MyServer {
     public static void main(String[] args) throws Exception{
-
-
         //创建两个线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup(); //8个NioEventLoop
         try {
-
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-
             serverBootstrap.group(bossGroup, workerGroup);
             serverBootstrap.channel(NioServerSocketChannel.class);
             serverBootstrap.handler(new LoggingHandler(LogLevel.INFO));
@@ -38,17 +34,18 @@ public class MyServer {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline pipeline = ch.pipeline();
-
                     //因为基于http协议，使用http的编码和解码器
+                    // DuplexHandler
                     pipeline.addLast(new HttpServerCodec());
                     //是以块方式写，添加ChunkedWriteHandler处理器
+                    // DuplexHandler
                     pipeline.addLast(new ChunkedWriteHandler());
-
                     /*
                     说明
                     1. http数据在传输过程中是分段, HttpObjectAggregator ，就是可以将多个段聚合
                     2. 这就就是为什么，当浏览器发送大量数据时，就会发出多次http请求
                      */
+                    // InboundHandler decoder
                     pipeline.addLast(new HttpObjectAggregator(8192));
                     /*
                     说明
@@ -58,17 +55,15 @@ public class MyServer {
                     4. WebSocketServerProtocolHandler 核心功能是将 http协议升级为 ws协议 , 保持长连接
                     5. 是通过一个 状态码 101
                      */
+                    // InboundHandler
                     pipeline.addLast(new WebSocketServerProtocolHandler("/hello2"));
-
                     //自定义的handler ，处理业务逻辑
                     pipeline.addLast(new MyTextWebSocketFrameHandler());
                 }
             });
-
             //启动服务器
             ChannelFuture channelFuture = serverBootstrap.bind(7000).sync();
             channelFuture.channel().closeFuture().sync();
-
         }finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

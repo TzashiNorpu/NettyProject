@@ -14,9 +14,8 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-
+        // 经由 IdleStateHandler handler 处理后给下一个 handler IdleStateEvent 事件
         if(evt instanceof IdleStateEvent) {
-
             //将  evt 向下转型 IdleStateEvent
             IdleStateEvent event = (IdleStateEvent) evt;
             String eventType = null;
@@ -33,7 +32,6 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
             }
             System.out.println(ctx.channel().remoteAddress() + "--超时时间--" + eventType);
             System.out.println("服务器做相应处理..");
-
             //如果发生空闲，我们关闭通道
            // ctx.channel().close();
         }
