@@ -29,7 +29,7 @@ public class NettyByteBuf02 {
 
             //System.out.println(byteBuf.readByte()); //
             System.out.println(byteBuf.getByte(0)); // 104
-
+            // readerIndex 和 writerIndex 之间的个数
             int len = byteBuf.readableBytes(); //可读的字节数  12
             System.out.println("len=" + len);
 
@@ -39,8 +39,8 @@ public class NettyByteBuf02 {
             }
 
             //按照某个范围读取
-            System.out.println(byteBuf.getCharSequence(0, 4, Charset.forName("utf-8")));
-            System.out.println(byteBuf.getCharSequence(4, 6, Charset.forName("utf-8")));
+            System.out.println(byteBuf.getCharSequence(0, 4, StandardCharsets.UTF_8));
+            System.out.println(byteBuf.getCharSequence(4, 6, StandardCharsets.UTF_8));
 
 
         }
