@@ -4,12 +4,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class NettyByteBuf02 {
     public static void main(String[] args) {
 
         //创建ByteBuf
-        ByteBuf byteBuf = Unpooled.copiedBuffer("hello,world!", Charset.forName("utf-8"));
+        ByteBuf byteBuf = Unpooled.copiedBuffer("hello,world!", StandardCharsets.UTF_8);
 
         //使用相关的方法
         if(byteBuf.hasArray()) { // true
@@ -17,7 +18,7 @@ public class NettyByteBuf02 {
             byte[] content = byteBuf.array();
 
             //将 content 转成字符串
-            System.out.println(new String(content, Charset.forName("utf-8")));
+            System.out.println(new String(content, StandardCharsets.UTF_8));
 
             System.out.println("byteBuf=" + byteBuf);
 
